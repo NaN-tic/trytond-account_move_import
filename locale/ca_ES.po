@@ -1,0 +1,141 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:account.move.import:"
+msgid "Import error: %s"
+msgstr "Error d'importació: %s"
+
+msgctxt "error:account.move.import:"
+msgid "Not found period: %s"
+msgstr "Període no trobat: %s"
+
+msgctxt "field:account.move.import,create_date:"
+msgid "Create Date"
+msgstr "Data de creació"
+
+msgctxt "field:account.move.import,create_uid:"
+msgid "Create User"
+msgstr "Usuari de creació"
+
+msgctxt "field:account.move.import,description:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:account.move.import,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:account.move.import,journal:"
+msgid "Journal"
+msgstr "Diari"
+
+msgctxt "field:account.move.import,lines:"
+msgid "Lines"
+msgstr "Línies"
+
+msgctxt "field:account.move.import,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:account.move.import,state:"
+msgid "State"
+msgstr "Estat"
+
+msgctxt "field:account.move.import,write_date:"
+msgid "Write Date"
+msgstr "Usuari creació"
+
+msgctxt "field:account.move.import,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:account.move.import.line,account_description:"
+msgid "Account Description"
+msgstr "Descripció"
+
+msgctxt "field:account.move.import.line,account_import:"
+msgid "lines"
+msgstr "Linies"
+
+msgctxt "field:account.move.import.line,account_moves:"
+msgid "Account Moves"
+msgstr "Assentaments comptables"
+
+msgctxt "field:account.move.import.line,accounts:"
+msgid "Accounts"
+msgstr "Comptes"
+
+msgctxt "field:account.move.import.line,create_date:"
+msgid "Create Date"
+msgstr "Data de creació"
+
+msgctxt "field:account.move.import.line,create_uid:"
+msgid "Create User"
+msgstr "Usuari de creació"
+
+msgctxt "field:account.move.import.line,credit:"
+msgid "Credit"
+msgstr "Haver"
+
+msgctxt "field:account.move.import.line,date:"
+msgid "Date"
+msgstr "Data"
+
+msgctxt "field:account.move.import.line,debit:"
+msgid "Debit"
+msgstr "Deure"
+
+msgctxt "field:account.move.import.line,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:account.move.import.line,party:"
+msgid "Party"
+msgstr "Tercers"
+
+msgctxt "field:account.move.import.line,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:account.move.import.line,write_date:"
+msgid "Write Date"
+msgstr "Usuari creació"
+
+msgctxt "field:account.move.import.line,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "model:account.move.import,name:"
+msgid "Account Move Import"
+msgstr "Importació Assentaments"
+
+msgctxt "model:account.move.import.line,name:"
+msgid "Account Move Import Line"
+msgstr "Línia d'importació"
+
+msgctxt "model:ir.action,name:act_account_move_import_form"
+msgid "Account Move Import"
+msgstr "Importació Assentaments"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_account_move_import_domain_all"
+msgid "All"
+msgstr "Tots"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_account_move_import_domain_draft"
+msgid "Draft"
+msgstr "Esborrany"
+
+msgctxt "model:ir.ui.menu,name:menu_account_move_import_form"
+msgid "Account Move Import"
+msgstr "Importació Assentaments"
+
+msgctxt "selection:account.move.import,state:"
+msgid "Done"
+msgstr "Tancat"
+
+msgctxt "selection:account.move.import,state:"
+msgid "Draft"
+msgstr "Esborrany"

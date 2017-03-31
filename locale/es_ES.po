@@ -1,0 +1,141 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:account.move.import:"
+msgid "Import error: %s"
+msgstr "Error de importación: %s"
+
+msgctxt "error:account.move.import:"
+msgid "Not found period: %s"
+msgstr "Período no encontrado: %s"
+
+msgctxt "field:account.move.import,create_date:"
+msgid "Create Date"
+msgstr "Fecha de creación"
+
+msgctxt "field:account.move.import,create_uid:"
+msgid "Create User"
+msgstr "Usuario de creación"
+
+msgctxt "field:account.move.import,description:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:account.move.import,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:account.move.import,journal:"
+msgid "Journal"
+msgstr "Diario"
+
+msgctxt "field:account.move.import,lines:"
+msgid "Lines"
+msgstr "Líneas"
+
+msgctxt "field:account.move.import,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:account.move.import,state:"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "field:account.move.import,write_date:"
+msgid "Write Date"
+msgstr "Usuario creación"
+
+msgctxt "field:account.move.import,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "field:account.move.import.line,account_description:"
+msgid "Account Description"
+msgstr "Descripción"
+
+msgctxt "field:account.move.import.line,account_import:"
+msgid "lines"
+msgstr "líneas"
+
+msgctxt "field:account.move.import.line,account_moves:"
+msgid "Account Moves"
+msgstr "Asientos contables"
+
+msgctxt "field:account.move.import.line,accounts:"
+msgid "Accounts"
+msgstr "Cuentas"
+
+msgctxt "field:account.move.import.line,create_date:"
+msgid "Create Date"
+msgstr "Fecha de creación"
+
+msgctxt "field:account.move.import.line,create_uid:"
+msgid "Create User"
+msgstr "Usuario de creación"
+
+msgctxt "field:account.move.import.line,credit:"
+msgid "Credit"
+msgstr "Haber"
+
+msgctxt "field:account.move.import.line,date:"
+msgid "Date"
+msgstr "Fecha"
+
+msgctxt "field:account.move.import.line,debit:"
+msgid "Debit"
+msgstr "Debe"
+
+msgctxt "field:account.move.import.line,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:account.move.import.line,party:"
+msgid "Party"
+msgstr "Terceros"
+
+msgctxt "field:account.move.import.line,rec_name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:account.move.import.line,write_date:"
+msgid "Write Date"
+msgstr "Usuario creación"
+
+msgctxt "field:account.move.import.line,write_uid:"
+msgid "Write User"
+msgstr "Usuario modificación"
+
+msgctxt "model:account.move.import,name:"
+msgid "Account Move Import"
+msgstr "Importación de asientos"
+
+msgctxt "model:account.move.import.line,name:"
+msgid "Account Move Import Line"
+msgstr "Línea de Importación"
+
+msgctxt "model:ir.action,name:act_account_move_import_form"
+msgid "Account Move Import"
+msgstr "Importación de asientos"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_account_move_import_domain_all"
+msgid "All"
+msgstr "Todos"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_account_move_import_domain_draft"
+msgid "Draft"
+msgstr "Borrador"
+
+msgctxt "model:ir.ui.menu,name:menu_account_move_import_form"
+msgid "Account Move Import"
+msgstr "Importación de asientos"
+
+msgctxt "selection:account.move.import,state:"
+msgid "Done"
+msgstr "Realizar"
+
+msgctxt "selection:account.move.import,state:"
+msgid "Draft"
+msgstr "Borrador"

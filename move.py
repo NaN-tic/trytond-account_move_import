@@ -105,6 +105,7 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
                     record.parse_excel_data(is_data_correct[1])
                     )
 
+
             if to_create_lines:
                 current_move.lines = to_create_lines
                 to_create.append(current_move)
