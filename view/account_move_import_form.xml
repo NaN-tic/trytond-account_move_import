@@ -2,8 +2,8 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <form string="Account Move Import">
-	<label name="description" colspan="1"/>
-	<field name="description" colspan="1"/>
+	<label name="name" colspan="1"/>
+	<field name="name" colspan="1"/>
 	<label name="journal" colspan="1"/>
 	<field name="journal" colspan="1"/>
   <field name="lines" colspan="4"/>

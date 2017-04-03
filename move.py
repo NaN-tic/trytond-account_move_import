@@ -1,24 +1,31 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+
+import logging
+
 from decimal import Decimal
 import datetime
 
+from trytond.transaction import Transaction
 from trytond.pool import Pool
-from trytond.model import fields, ModelSQL, ModelView, Workflow
+from trytond.model import fields, ModelSQL, ModelView, Workflow, Unique
 from trytond.pyson import Eval
 
 __all__ = ['AccountMoveImport', 'AccountMoveImportLine']
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountMoveImport(Workflow, ModelSQL, ModelView):
     'Account Move Import'
     __name__ = 'account.move.import'
-    _rec_name = 'description'
 
-    description = fields.Char('Name',
+    name = fields.Char('Name',
+        required=True,
         states={
             'readonly': Eval('state') == 'done',
-        })
+        },
+        )
     journal = fields.Many2One('account.journal', 'Journal', required=True,
         states={
             'readonly': Eval('state') == 'done',
@@ -48,6 +55,11 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
         cls._transitions |= set((
             ('draft', 'done'),
             ))
+        t = cls.__table__()
+        cls._sql_constraints.append(
+            ('name_uniq', Unique(t, t.name),
+                'Move Import name must be unique'),
+        )
 
     @staticmethod
     def default_state():
@@ -136,7 +148,7 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
 
         results = {
             'account': account[0],
-            'party': self.get_value(party),
+            'party': party.id if party else None,
             'date': data.date or None,
             'debit': Decimal(data.debit.replace('.', '').replace(',', '.')
                 or '00.00'),
@@ -169,18 +181,12 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
             return datetime.datetime.strptime(date, '%d/%m/%Y')
         return None
 
-    def get_value(self, value):
-        try:
-            return value[0]
-        except:
-            return None
-
 
 class AccountMoveImportLine(ModelSQL, ModelView):
     'Account Move Import Line'
     __name__ = 'account.move.import.line'
-    account_import = fields.Many2One('account.move.import', 'lines',
-        required=True, readonly=True, ondelete='CASCADE')
+    account_import = fields.Many2One('account.move.import', 'Move Import',
+        required=True, ondelete='CASCADE')
     account_moves = fields.Char('Account Moves')
     date = fields.Char('Date')
     accounts = fields.Char('Accounts', required=True)
@@ -188,3 +194,23 @@ class AccountMoveImportLine(ModelSQL, ModelView):
     debit = fields.Char('Debit')
     credit = fields.Char('Credit')
     account_description = fields.Char('Account Description')
+
+    @classmethod
+    def import_data(cls, fields_names, data):
+        import_id = Transaction().context.get('import_id')
+        if import_id and 'account_import' not in fields_names:
+            fields_names, data = cls.preappend_move_import(
+                fields_names, data, import_id)
+        return super(AccountMoveImportLine, cls).import_data(
+            fields_names, data)
+
+    @staticmethod
+    def preappend_move_import(fields_names, data, import_id):
+        move_import = Pool().get('account.move.import')(import_id)
+        fields_names = ['account_import'] + fields_names
+        # This relies on account_import rec_name being unique!
+        data = [
+            [move_import.rec_name] + line
+            for line in data
+        ]
+        return fields_names, data
