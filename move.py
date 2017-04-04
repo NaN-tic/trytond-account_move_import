@@ -36,10 +36,11 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
     )
     date_format = fields.Selection(
         [
-            ('%d/%m/%Y', 'DD/MM/YY'),
-            ('%d-%m-%Y', 'DD-MM-YY'),
+            ('%d/%m/%Y', 'DD/MM/YYYY'),
+            ('%d-%m-%Y', 'DD-MM-YYYY'),
         ],
         'Date Format',
+        sort=False,
         required=True,
         states={
             'readonly': Eval('state') == 'done',
@@ -51,6 +52,7 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
             ('usa', '1,000.00'),
         ],
         'Numeric Format',
+        sort=False,
         required=True,
         states={
             'readonly': Eval('state') == 'done',
@@ -90,6 +92,14 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
     @staticmethod
     def default_state():
         return 'draft'
+
+    @staticmethod
+    def default_date_format():
+        return '%d/%m/%Y'
+
+    @staticmethod
+    def default_numeric_format():
+        return 'europe'
 
     @classmethod
     @ModelView.button
@@ -133,7 +143,8 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
                     current_move.period = period
 
                 to_create_lines.append(
-                    move_import.parse_import_line(line_import))
+                    line_import.build_account_move_line()
+                )
 
             if to_create_lines:
                 current_move.lines = to_create_lines
@@ -142,56 +153,11 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
         if to_create:
             AccountMove.create([x._save_values for x in to_create])
 
-    def parse_import_line(self, line_import):
-        "Parses an account.move.line.import object "
-        "into a new account.move.line instance"
-        pool = Pool()
-        AccountMoveLine = pool.get('account.move.line')
-        account_move_line = AccountMoveLine(
-            account=self.find_account(line_import.accounts),
-            party=self.find_party(line_import.party),
-            date=self.parse_datetime(line_import.date),
-            debit=self.parse_decimal(line_import.debit),
-            credit=self.parse_decimal(line_import.credit),
-            description=line_import.account_description,
-        )
-        return account_move_line
-
-    def find_account(self, account_name):
-        pool = Pool()
-        Account = pool.get('account.account')
-        accounts, = Account.search([('code', '=', account_name)], limit=1)
-        if not accounts:
-            self.raise_user_error(
-                'incorrect_data', 'No account named %s' % account_name)
-        return accounts[0]
-
-    def find_party(self, party_name):
-        if not party_name:
-            return None
-        Party = Pool().get('party.party')
-        parties, = Party.search([('name', '=', party_name)], limit=1)
-        if not parties:
-            self.raise_user_error(
-                'incorrect_data', 'No party named %s' % party_name)
-        return parties[0]
-
     def parse_datetime(self, date):
         """ Converts a formatted date to a datetime object """
         if date:
             return datetime.datetime.strptime(date, self.date_format)
         return None
-
-    def parse_decimal(self, decimal):
-        """ Converts a string to Decimal having thousand separators in mind """
-        if decimal:
-            if self.numeric_format == 'europe':
-                decimal = decimal.replace('.', '').replace(',', '.')
-            else:
-                decimal = decimal.replace(',', '')
-        else:
-            decimal = '00.00'
-        return Decimal(decimal)
 
 
 class AccountMoveImportLine(ModelSQL, ModelView):
@@ -202,11 +168,18 @@ class AccountMoveImportLine(ModelSQL, ModelView):
         required=True, ondelete='CASCADE')
     account_moves = fields.Char('Account Moves')
     date = fields.Char('Date')
-    accounts = fields.Char('Accounts', required=True)
+    account = fields.Char('Account', required=True)
     party = fields.Char('Party')
     debit = fields.Char('Debit')
     credit = fields.Char('Credit')
     account_description = fields.Char('Account Description')
+
+    @classmethod
+    def __setup__(cls):
+        super(AccountMoveImportLine, cls).__setup__()
+        cls._error_messages.update({
+            'incorrect_data': ('Import error: %s'),
+        })
 
     @classmethod
     def import_data(cls, fields_names, data):
@@ -227,3 +200,48 @@ class AccountMoveImportLine(ModelSQL, ModelView):
             for line in data
         ]
         return fields_names, data
+
+    def build_account_move_line(self):
+        "Parses an account.move.line.import object "
+        "into a new account.move.line instance"
+        pool = Pool()
+        AccountMoveLine = pool.get('account.move.line')
+        account_move_line = AccountMoveLine(
+            account=self.find_account(self.account),
+            party=self.find_party(self.party),
+            date=self.account_import.parse_datetime(self.date),
+            debit=self.parse_decimal(self.debit),
+            credit=self.parse_decimal(self.credit),
+            description=self.account_description,
+        )
+        return account_move_line
+
+    def find_account(self, account_name):
+        pool = Pool()
+        Account = pool.get('account.account')
+        accounts = Account.search([('code', '=', account_name)], limit=1)
+        if not accounts:
+            self.raise_user_error(
+                'incorrect_data', 'No account named %s' % account_name)
+        return accounts[0]
+
+    def find_party(self, party_name):
+        if not party_name:
+            return None
+        Party = Pool().get('party.party')
+        parties = Party.search([('name', '=', party_name)], limit=1)
+        if not parties:
+            self.raise_user_error(
+                'incorrect_data', 'No party named %s' % party_name)
+        return parties[0]
+
+    def parse_decimal(self, decimal):
+        """ Converts a string to Decimal having thousand separators in mind """
+        if decimal:
+            if self.account_import.numeric_format == 'europe':
+                decimal = decimal.replace('.', '').replace(',', '.')
+            else:
+                decimal = decimal.replace(',', '')
+        else:
+            decimal = '00.00'
+        return Decimal(decimal)

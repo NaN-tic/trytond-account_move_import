@@ -62,9 +62,9 @@ msgctxt "field:account.move.import.line,account_moves:"
 msgid "Account Moves"
 msgstr "Assentaments comptables"
 
-msgctxt "field:account.move.import.line,accounts:"
-msgid "Accounts"
-msgstr "Comptes"
+msgctxt "field:account.move.import.line,account:"
+msgid "Account"
+msgstr "Compte"
 
 msgctxt "field:account.move.import.line,create_date:"
 msgid "Create Date"

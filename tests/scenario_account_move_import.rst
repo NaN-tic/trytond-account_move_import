@@ -93,11 +93,12 @@ Create Accounts import::
     >>> account_import.name = 'Test import'
     >>> account_import.date_format = '%d/%m/%Y'
     >>> account_import.numeric_format = 'europe'
+    >>> account_import.save()
 
     >>> line = account_import.lines.new()
     >>> line.account_moves = '1234'
     >>> line.date = '10/11/2017'
-    >>> line.accounts = revenue.code
+    >>> line.account = revenue.code
     >>> line.debit = '10,00'
     >>> line.credit = '0,0'
     >>> line.account_description = 'First account move of the test'
@@ -106,7 +107,7 @@ Create Accounts import::
     >>> line2 = account_import.lines.new()
     >>> line2.account_moves = ''
     >>> line2.date = '10/11/2017'
-    >>> line2.accounts = revenue.code
+    >>> line2.account = revenue.code
     >>> line2.credit = '10,00'
     >>> line2.debit = '0,0'
     >>> line2.account_description = 'Second account move of the test'
@@ -114,7 +115,7 @@ Create Accounts import::
     >>> line3 = account_import.lines.new()
     >>> line3.account_moves = '4321'
     >>> line3.date = '12/11/2017'
-    >>> line3.accounts = expense.code
+    >>> line3.account = expense.code
     >>> line3.debit = '10,00'
     >>> line3.credit = '0,0'
     >>> line3.account_description = 'Third account move of the test'
