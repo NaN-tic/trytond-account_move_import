@@ -122,7 +122,7 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
                     current_move = AccountMove()
                     current_move.journal = default_journal
 
-                    date = move_import.get_datetime(line_import.date)
+                    date = move_import.parse_datetime(line_import.date)
                     period_name = '%s-%02d' % (date.year, date.month)
 
                     periods = Period.search([
