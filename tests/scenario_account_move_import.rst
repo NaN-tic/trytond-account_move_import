@@ -90,7 +90,9 @@ Create Accounts import::
     >>> AccountImportLine = Model.get('account.move.import.line')
     >>> account_import = AccountImport()
     >>> account_import.journal = journal
-    >>> account_import.description = 'Test import'
+    >>> account_import.name = 'Test import'
+    >>> account_import.date_format = '%d/%m/%Y'
+    >>> account_import.numeric_format = 'europe'
 
     >>> line = account_import.lines.new()
     >>> line.account_moves = '1234'

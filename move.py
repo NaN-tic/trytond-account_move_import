@@ -20,16 +20,42 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
     'Account Move Import'
     __name__ = 'account.move.import'
 
-    name = fields.Char('Name',
+    name = fields.Char(
+        'Name',
         required=True,
         states={
             'readonly': Eval('state') == 'done',
         },
-        )
-    journal = fields.Many2One('account.journal', 'Journal', required=True,
+    )
+    journal = fields.Many2One(
+        'account.journal', 'Journal',
+        required=True,
         states={
             'readonly': Eval('state') == 'done',
-        })
+        }
+    )
+    date_format = fields.Selection(
+        [
+            ('%d/%m/%Y', 'DD/MM/YY'),
+            ('%d-%m-%Y', 'DD-MM-YY'),
+        ],
+        'Date Format',
+        required=True,
+        states={
+            'readonly': Eval('state') == 'done',
+        }
+    )
+    numeric_format = fields.Selection(
+        [
+            ('europe', '1.000,00'),
+            ('usa', '1,000.00'),
+        ],
+        'Numeric Format',
+        required=True,
+        states={
+            'readonly': Eval('state') == 'done',
+        }
+    )
     lines = fields.One2Many('account.move.import.line', 'account_import',
         'Lines', states={
             'readonly': Eval('state') == 'done',
@@ -74,17 +100,17 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
         Period = pool.get('account.period')
 
         to_create = []
-        for record in records:
+        for move_import in records:
             to_create_lines = []
-            default_journal = record.journal
+            default_journal = move_import.journal
             current_account_move = None
             account_move = None
             current_move = None
 
-            for line in record.lines:
+            for line_import in move_import.lines:
                 # There might nor be a number for the account, then assume
                 # we are working on the same account move
-                current_account_move = line.account_moves or account_move
+                current_account_move = line_import.account_moves or account_move
 
                 if current_account_move != account_move:
                     account_move = current_account_move
@@ -96,7 +122,7 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
                     current_move = AccountMove()
                     current_move.journal = default_journal
 
-                    date = record.get_datetime(line.date)
+                    date = move_import.get_datetime(line_import.date)
                     period_name = '%s-%02d' % (date.year, date.month)
 
                     periods = Period.search([
@@ -106,17 +132,8 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
                     period, = periods
                     current_move.period = period
 
-                is_data_correct = record.check_data(line)
-
-                # is_data_correct ->
-                # (Bool(is_data_correct), [Error or parsed data])
-                if not is_data_correct[0]:
-                    cls.raise_user_error('incorrect_data', is_data_correct[1])
-
                 to_create_lines.append(
-                    record.parse_excel_data(is_data_correct[1])
-                    )
-
+                    move_import.parse_import_line(line_import))
 
             if to_create_lines:
                 current_move.lines = to_create_lines
@@ -125,67 +142,60 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
         if to_create:
             AccountMove.create([x._save_values for x in to_create])
 
-    def check_data(self, data):
-        """ Checks that all the data is correct """
-        pool = Pool()
-        Account = pool.get('account.account')
-        Party = pool.get('party.party')
-
-        if not data.accounts:
-            return (False, 'No account found in move ' + data.account_moves)
-
-        account = Account.search([('code', '=', data.accounts)], limit=1)
-        party = Party.search([('name', '=', data.party)], limit=1)
-
-        if not account:
-            return (False, 'No account for ' + data.accounts + ' in move ' +
-                data.account_moves)
-        if not party and data.party:
-            return (False, 'Unable to find party ' + data.party + ' in move ' +
-                data.account_moves)
-
-        data.date = self.get_datetime(data.date)
-
-        results = {
-            'account': account[0],
-            'party': party.id if party else None,
-            'date': data.date or None,
-            'debit': Decimal(data.debit.replace('.', '').replace(',', '.')
-                or '00.00'),
-            'credit': Decimal(data.credit.replace('.', '').replace(',', '.')
-                or '00.00'),
-            'description': data.account_description,
-            'move_description': data.account_description,
-        }
-
-        return (True, results)
-
-    def parse_excel_data(self, data):
-        """ Preapes the data to be created """
+    def parse_import_line(self, line_import):
+        "Parses an account.move.line.import object "
+        "into a new account.move.line instance"
         pool = Pool()
         AccountMoveLine = pool.get('account.move.line')
-        account_move_line = AccountMoveLine()
-        account_move_line.account = data['account']
-        account_move_line.party = data['party']
-        account_move_line.date = data['date']
-        account_move_line.debit = data['debit']
-        account_move_line.credit = data['credit']
-        account_move_line.description = data['description']
-
+        account_move_line = AccountMoveLine(
+            account=self.find_account(line_import.accounts),
+            party=self.find_party(line_import.party),
+            date=self.parse_datetime(line_import.date),
+            debit=self.parse_decimal(line_import.debit),
+            credit=self.parse_decimal(line_import.credit),
+            description=line_import.account_description,
+        )
         return account_move_line
 
-    def get_datetime(self, date):
-        """ Converts a date to datetime format """
+    def find_account(self, account_name):
+        pool = Pool()
+        Account = pool.get('account.account')
+        account, = Account.search([('code', '=', account_name)], limit=1)
+        if not account:
+            self.raise_user_error(
+                'incorrect_data', 'No account named %s' % account_name)
+        return account
+
+    def find_party(self, party_name):
+        if not party_name:
+            return None
+        Party = Pool().get('party.party')
+        party, = Party.search([('name', '=', party_name)], limit=1)
+        if not party:
+            self.raise_user_error(
+                'incorrect_data', 'No party named %s' % party_name)
+        return party
+
+    def parse_datetime(self, date):
+        """ Converts a formatted date to a datetime object """
         if date:
-            date = date.replace('-', '/')
-            return datetime.datetime.strptime(date, '%d/%m/%Y')
+            return datetime.datetime.strptime(date, self.date_format)
         return None
+
+    def parse_decimal(self, decimal):
+        """ Converts a string to Decimal having thousand separators in mind """
+        if self.numeric_format == 'europe':
+            decimal = decimal.replace('.', '').replace(',', '.') or '00.00'
+        else:
+            decimal = decimal.replace(',', '') or '00.00'
+        return Decimal(decimal)
 
 
 class AccountMoveImportLine(ModelSQL, ModelView):
     'Account Move Import Line'
     __name__ = 'account.move.import.line'
-    account_import = fields.Many2One('account.move.import', 'Move Import',
+    account_import = fields.Many2One(
+        'account.move.import', 'Move Import',
         required=True, ondelete='CASCADE')
     account_moves = fields.Char('Account Moves')
     date = fields.Char('Date')
