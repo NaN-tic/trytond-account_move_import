@@ -184,10 +184,13 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
 
     def parse_decimal(self, decimal):
         """ Converts a string to Decimal having thousand separators in mind """
-        if self.numeric_format == 'europe':
-            decimal = decimal.replace('.', '').replace(',', '.') or '00.00'
+        if decimal:
+            if self.numeric_format == 'europe':
+                decimal = decimal.replace('.', '').replace(',', '.')
+            else:
+                decimal = decimal.replace(',', '')
         else:
-            decimal = decimal.replace(',', '') or '00.00'
+            decimal = '00.00'
         return Decimal(decimal)
 
 
