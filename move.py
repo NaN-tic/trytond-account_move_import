@@ -160,21 +160,21 @@ class AccountMoveImport(Workflow, ModelSQL, ModelView):
     def find_account(self, account_name):
         pool = Pool()
         Account = pool.get('account.account')
-        account, = Account.search([('code', '=', account_name)], limit=1)
-        if not account:
+        accounts, = Account.search([('code', '=', account_name)], limit=1)
+        if not accounts:
             self.raise_user_error(
                 'incorrect_data', 'No account named %s' % account_name)
-        return account
+        return accounts[0]
 
     def find_party(self, party_name):
         if not party_name:
             return None
         Party = Pool().get('party.party')
-        party, = Party.search([('name', '=', party_name)], limit=1)
-        if not party:
+        parties, = Party.search([('name', '=', party_name)], limit=1)
+        if not parties:
             self.raise_user_error(
                 'incorrect_data', 'No party named %s' % party_name)
-        return party
+        return parties[0]
 
     def parse_datetime(self, date):
         """ Converts a formatted date to a datetime object """
