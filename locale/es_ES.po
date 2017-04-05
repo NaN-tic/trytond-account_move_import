@@ -30,6 +30,14 @@ msgctxt "field:account.move.import,journal:"
 msgid "Journal"
 msgstr "Diario"
 
+msgctxt "field:account.move.import,date_format:"
+msgid "Date Format"
+msgstr "Formato de fecha"
+
+msgctxt "field:account.move.import,numeric_format:"
+msgid "Numeric Format"
+msgstr "Formato numérico"
+
 msgctxt "field:account.move.import,lines:"
 msgid "Lines"
 msgstr "Líneas"
@@ -134,7 +142,7 @@ msgstr "Importación de asientos"
 
 msgctxt "selection:account.move.import,state:"
 msgid "Done"
-msgstr "Realizar"
+msgstr "Procesado"
 
 msgctxt "selection:account.move.import,state:"
 msgid "Draft"
