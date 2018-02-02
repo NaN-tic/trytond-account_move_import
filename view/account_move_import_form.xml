@@ -1,22 +1,17 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
-	copyright notices and license terms. -->
-<form string="Account Move Import">
-
-	<label name="name" colspan="1"/>
-	<field name="name" colspan="1"/>
-	<label name="journal" colspan="1"/>
-	<field name="journal" colspan="1"/>
-
-	<label name="date_format" colspan="1"/>
-	<field name="date_format" colspan="1"/>
-	<label name="numeric_format" colspan="1"/>
-	<field name="numeric_format" colspan="1"/>
-
-	<field name="lines" colspan="4"/>
-
-	<label name="state"/>
-	<field name="state"/>
-	<button string="Process Lines" name="process" colspan="2" icon="tryton-go-next"/>
-
+    copyright notices and license terms. -->
+<form>
+    <label name="name" colspan="1"/>
+    <field name="name" colspan="1"/>
+    <label name="journal" colspan="1"/>
+    <field name="journal" colspan="1"/>
+    <label name="date_format" colspan="1"/>
+    <field name="date_format" colspan="1"/>
+    <label name="numeric_format" colspan="1"/>
+    <field name="numeric_format" colspan="1"/>
+    <field name="lines" colspan="4"/>
+    <label name="state"/>
+    <field name="state"/>
+    <button string="Process Lines" name="process" colspan="2" icon="tryton-go-next"/>
 </form>
